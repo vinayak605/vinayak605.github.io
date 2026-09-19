@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vinayak Kapoor — Data &amp; ML Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1420;
+    --bg-alt:#141a28;
+    --surface:#1b2333;
+    --surface-2:#242f43;
+    --line: rgba(56,214,255,0.30);
+    --line-soft: rgba(233,240,247,0.11);
+    --text:#f2f6fa;
+    --muted:#a3b0c2;
+    --muted-2:#71809a;
+    --copper:#38d6ff;
+    --copper-bright:#8fe8ff;
+    --teal:#b18cff;
+    --alert:#ff8066;
+    --safe:#5fe0a3;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--copper); color:#111;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+
+  /* subtle circuit-grid background */
+  .grid-bg{
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 85%);
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(12,15,19,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .nav-inner{
+    max-width:1120px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+  }
+  .logo{
+    font-family:var(--mono); font-weight:600; font-size:15px;
+    color:var(--copper-bright); letter-spacing:0.5px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{width:7px; height:7px; border-radius:50%; background:var(--safe); box-shadow:0 0 8px var(--safe); flex-shrink:0;}
+  nav ul{list-style:none; display:flex; gap:30px;}
+  nav a{
+    font-size:14px; color:var(--muted); font-weight:500;
+    transition:color .2s ease; position:relative;
+  }
+  nav a:hover, nav a.active{color:var(--text);}
+  nav a.active::after{
+    content:''; position:absolute; left:0; right:0; bottom:-16px; height:2px; background:var(--copper);
+  }
+  .nav-toggle{display:none; flex-direction:column; gap:4px; cursor:pointer; background:none; border:none;}
+  .nav-toggle span{width:22px; height:2px; background:var(--text);}
+
+  @media (max-width:760px){
+    nav ul{
+      position:fixed; top:57px; left:0; right:0;
+      background:var(--bg-alt); flex-direction:column; gap:0;
+      border-bottom:1px solid var(--line-soft);
+      max-height:0; overflow:hidden; transition:max-height .3s ease;
+    }
+    nav ul.open{max-height:400px;}
+    nav ul li{border-top:1px solid var(--line-soft);}
+    nav ul a{display:block; padding:16px 28px;}
+    nav a.active::after{display:none;}
+    nav a.active{color:var(--copper-bright);}
+    .nav-toggle{display:flex;}
+  }
+
+  section{max-width:1120px; margin:0 auto; padding:110px 28px;}
+  @media (max-width:760px){ section{padding:72px 22px;} }
+
+  .eyebrow{
+    font-family:var(--mono); font-size:12.5px; color:var(--copper);
+    display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  }
+  .eyebrow::before{content:'//'; color:var(--muted-2);}
+
+  h1,h2,h3{font-family:var(--sans); font-weight:600; letter-spacing:-0.01em;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:92vh; display:flex; flex-direction:column; justify-content:center;
+    padding-top:70px; padding-bottom:70px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .terminal{
+    font-family:var(--mono); font-size:13px; color:var(--safe);
+    background:var(--bg-alt); border:1px solid var(--line-soft);
+    border-radius:8px; padding:16px 20px; max-width:560px;
+    margin-bottom:36px; min-height:150px;
+  }
+  .terminal .bar{display:flex; gap:6px; margin-bottom:14px;}
+  .terminal .bar span{width:9px; height:9px; border-radius:50%; background:var(--surface-2);}
+  .terminal-line{white-space:pre-wrap; opacity:0; animation:fadeIn .3s forwards;}
+  .terminal-line .ok{color:var(--safe);}
+  .cursor{display:inline-block; width:7px; height:14px; background:var(--copper-bright); vertical-align:-2px; animation:blink 1s step-end infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  @keyframes fadeIn{to{opacity:1;}}
+
+  .hero-title{
+    font-size:clamp(2.4rem, 5.6vw, 4.4rem);
+    line-height:1.04; letter-spacing:-0.02em;
+    opacity:0; transform:translateY(14px);
+  }
+  .hero-title span{color:var(--copper-bright);}
+  .hero-role{
+    font-family:var(--mono); font-size:15px; color:var(--teal);
+    margin-top:20px; opacity:0;
+  }
+  .hero-desc{
+    max-width:600px; color:var(--muted); font-size:16.5px; margin-top:22px;
+    opacity:0;
+  }
+  .hero.revealed .hero-title,
+  .hero.revealed .hero-role,
+  .hero.revealed .hero-desc{
+    animation:riseIn .7s ease forwards;
+  }
+  .hero.revealed .hero-role{animation-delay:.12s;}
+  .hero.revealed .hero-desc{animation-delay:.24s;}
+  @keyframes riseIn{ to{opacity:1; transform:translateY(0);} }
+
+  .hero-cta{display:flex; gap:14px; margin-top:38px; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--mono); font-size:13.5px; padding:13px 22px;
+    border-radius:6px; border:1px solid var(--line);
+    display:inline-flex; align-items:center; gap:8px;
+    transition:all .18s ease; cursor:pointer;
+  }
+  .btn-primary{background:var(--copper); color:#141414; border-color:var(--copper); font-weight:600;}
+  .btn-primary:hover{background:var(--copper-bright); transform:translateY(-1px);}
+  .btn-ghost{color:var(--text); background:transparent;}
+  .btn-ghost:hover{border-color:var(--copper); color:var(--copper-bright);}
+
+  /* ---------- SECTION HEADERS ---------- */
+  .sec-head{margin-bottom:52px; max-width:640px;}
+  .sec-head h2{font-size:clamp(1.7rem,3.4vw,2.3rem);}
+  .sec-head p{color:var(--muted); margin-top:14px; font-size:15.5px;}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:60px; align-items:start;}
+  @media (max-width:800px){.about-grid{grid-template-columns:1fr;}}
+  .about-grid p{color:var(--muted); font-size:16px; margin-bottom:16px;}
+  .about-grid strong{color:var(--text); font-weight:600;}
+  .stat-list{display:grid; gap:0; border-top:1px solid var(--line-soft);}
+  .stat{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:18px 0; border-bottom:1px solid var(--line-soft);
+  }
+  .stat b{font-family:var(--mono); color:var(--copper-bright); font-size:22px;}
+  .stat span{color:var(--muted); font-size:13.5px;}
+
+  /* ---------- FEATURED PROJECT ---------- */
+  .feature-card{
+    background:linear-gradient(180deg, var(--surface), var(--bg-alt));
+    border:1px solid var(--line); border-radius:14px;
+    padding:44px; position:relative; overflow:hidden;
+  }
+  .feature-card::before{
+    content:''; position:absolute; top:-40%; right:-15%; width:420px; height:420px;
+    background:radial-gradient(circle, rgba(56,214,255,0.18), transparent 70%);
+    pointer-events:none;
+  }
+  @media (max-width:640px){.feature-card{padding:28px 22px;}}
+  .feature-top{display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; margin-bottom:6px;}
+  .feature-tag{
+    font-family:var(--mono); font-size:11.5px; color:var(--safe);
+    border:1px solid rgba(95,224,163,0.4); background:rgba(95,224,163,0.1);
+    padding:4px 10px; border-radius:20px; display:inline-block; margin-bottom:14px;
+  }
+  .feature-card h3{font-size:clamp(1.6rem,3vw,2.1rem); margin-bottom:10px;}
+  .feature-sub{font-family:var(--mono); font-size:13.5px; color:var(--copper); margin-bottom:20px;}
+  .feature-desc{color:var(--muted); font-size:15.5px; max-width:680px; margin-bottom:8px;}
+  .feature-quote{
+    font-family:var(--mono); font-size:13px; color:var(--muted-2);
+    border-left:2px solid var(--copper); padding-left:16px; margin:26px 0;
+    max-width:640px; line-height:1.7;
+  }
+  .stack-tags{display:flex; flex-wrap:wrap; gap:8px; margin:24px 0 8px;}
+  .stack-tags span{
+    font-family:var(--mono); font-size:12px; color:var(--muted);
+    border:1px solid var(--line-soft); padding:5px 11px; border-radius:5px;
+  }
+
+  .accordion{margin-top:32px; border-top:1px solid var(--line-soft);}
+  .acc-item{border-bottom:1px solid var(--line-soft);}
+  .acc-head{
+    width:100%; background:none; border:none; cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 2px; color:var(--text); font-family:var(--sans);
+    font-size:15px; font-weight:500; text-align:left;
+  }
+  .acc-head .num{font-family:var(--mono); color:var(--copper); font-size:12.5px; margin-right:12px;}
+  .acc-head .chev{color:var(--muted); transition:transform .25s ease; font-size:13px;}
+  .acc-item.open .chev{transform:rotate(45deg);}
+  .acc-panel{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+  .acc-panel-inner{padding:0 2px 22px; color:var(--muted); font-size:14.5px;}
+  .acc-panel-inner ul{padding-left:18px; display:grid; gap:9px;}
+  .acc-panel-inner li::marker{color:var(--copper);}
+
+  .feature-links{display:flex; gap:14px; margin-top:30px; flex-wrap:wrap;}
+
+  /* ---------- PROJECTS GRID ---------- */
+  .proj-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:22px; margin-top:52px;}
+  @media (max-width:760px){.proj-grid{grid-template-columns:1fr;}}
+  .proj-card{
+    background:var(--surface); border:1px solid var(--line-soft); border-radius:12px;
+    padding:28px; transition:border-color .2s ease, transform .2s ease;
+  }
+  .proj-card:hover{border-color:var(--line); transform:translateY(-3px);}
+  .proj-index{font-family:var(--mono); font-size:12px; color:var(--muted-2); margin-bottom:14px;}
+  .proj-card h3{font-size:18px; margin-bottom:10px;}
+  .proj-card p{color:var(--muted); font-size:14.5px; margin-bottom:18px;}
+  .proj-tags{display:flex; flex-wrap:wrap; gap:7px;}
+  .proj-tags span{
+    font-family:var(--mono); font-size:11px; color:var(--teal);
+    background:rgba(177,140,255,0.1); border:1px solid rgba(177,140,255,0.28);
+    padding:3px 9px; border-radius:4px;
+  }
+
+  /* ---------- SKILLS ---------- */
+  .skills-wrap{display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-top:1px solid var(--line-soft); border-left:1px solid var(--line-soft);}
+  @media (max-width:760px){.skills-wrap{grid-template-columns:repeat(2,1fr);}}
+  .skill-col{border-right:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); padding:26px 22px;}
+  .skill-col h4{font-family:var(--mono); font-size:12px; color:var(--copper); margin-bottom:16px; letter-spacing:0.03em;}
+  .skill-col ul{list-style:none; display:grid; gap:10px;}
+  .skill-col li{font-size:14.5px; color:var(--text); display:flex; align-items:center; gap:9px;}
+  .skill-col li::before{content:''; width:5px; height:5px; background:var(--safe); border-radius:50%; flex-shrink:0;}
+
+  /* ---------- EDUCATION ---------- */
+  .edu-row{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    border-top:1px solid var(--line-soft); padding:28px 0; gap:20px; flex-wrap:wrap;
+  }
+  .edu-row:last-child{border-bottom:1px solid var(--line-soft);}
+  .edu-row h3{font-size:18px; margin-bottom:6px;}
+  .edu-row p{color:var(--muted); font-size:14.5px;}
+  .edu-status{
+    font-family:var(--mono); font-size:12px; color:var(--safe);
+    border:1px solid rgba(95,224,163,0.4); padding:5px 12px; border-radius:20px; white-space:nowrap;
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact-wrap{
+    background:var(--surface); border:1px solid var(--line-soft); border-radius:14px;
+    padding:52px; text-align:center;
+  }
+  @media (max-width:640px){.contact-wrap{padding:34px 22px;}}
+  .contact-wrap h2{font-size:clamp(1.7rem,4vw,2.6rem); margin-bottom:16px;}
+  .contact-wrap p{color:var(--muted); max-width:480px; margin:0 auto 34px; font-size:15.5px;}
+  .contact-links{display:flex; justify-content:center; gap:16px; flex-wrap:wrap;}
+  .copy-note{
+    font-family:var(--mono); font-size:12px; color:var(--safe); margin-top:16px; height:16px;
+    opacity:0; transition:opacity .2s ease;
+  }
+  .copy-note.show{opacity:1;}
+
+  footer{
+    border-top:1px solid var(--line-soft); padding:30px 28px; text-align:center;
+    font-family:var(--mono); font-size:12px; color:var(--muted-2);
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header>
+  <div class="nav-inner">
+    <div class="logo"><span class="dot"></span>VINAYAK.KAPOOR</div>
+    <nav>
+      <ul id="navList">
+        <li><a href="#about">About</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="terminal">
+    <div class="bar"><span></span><span></span><span></span></div>
+    <div id="termLines"></div>
+  </div>
+
+  <h1 class="hero-title">Vinayak Kapoor —<br><span>builds things that see, judge,</span><br>and occasionally roast you.</h1>
+  <div class="hero-role">Data Science Enthusiast · Web Developer · Ghaziabad, India</div>
+  <p class="hero-desc">B.Tech student who turns dead laptops and spare sensors into working ML systems — from fraud-detection interfaces to a fully autonomous desk robot. Currently deep in data analysis, visualization, and applied machine learning.</p>
+  <div class="hero-cta">
+    <a href="#work" class="btn btn-primary">View work</a>
+    <a href="https://github.com/vinayak605/J.I.N.X" target="_blank" rel="noopener" class="btn btn-ghost">See J.I.N.X on GitHub</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="eyebrow">About</div>
+  <div class="about-grid">
+    <div>
+      <p>I'm a <strong>Bachelor's student at Maharishi University of Information Technology</strong>, Ghaziabad, majoring in Data Science. My interest sits at the intersection of <strong>data analysis, machine learning, and hardware</strong> — I like projects that don't stay on a slide, they turn a light on, move a motor, or flag a real threat.</p>
+      <p>That instinct is what led to <strong>J.I.N.X</strong>, a multi-modal AI desk companion built from a dead ThinkPad and a broken phone for under ₹4,600 — combining computer vision, audio classification, and conversational AI into one system. Alongside it, I've built fraud-detection web tools, gesture-controlled 3D visualizations, and Power BI dashboards that turn raw sales data into decisions.</p>
+      <p>I'm currently sharpening my skills in data visualization and reporting, and looking for opportunities to apply that thinking to real, messy, data-driven problems.</p>
+    </div>
+    <div class="stat-list">
+      <div class="stat"><span>Core interest</span><b>Data / ML</b></div>
+      <div class="stat"><span>Flagship build</span><b>J.I.N.X</b></div>
+      <div class="stat"><span>Languages spoken</span><b>EN · HI</b></div>
+      <div class="stat"><span>Status</span><b>Open to work</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="sec-head">
+    <div class="eyebrow">Selected work</div>
+    <h2>Projects that ship, not just slides</h2>
+    <p>One flagship build, plus three smaller projects spanning security ML, interactive visualization, and business intelligence.</p>
+  </div>
+
+  <!-- Featured Project: JINX -->
+  <div class="feature-card">
+    <div class="feature-tag">● featured build</div>
+    <div class="feature-top">
+      <div>
+        <h3>J.I.N.X — Judgmental Intelligence with Neural eXecution</h3>
+        <div class="feature-sub">Autonomous AI desk robot · B.Tech final year project, Data Science</div>
+      </div>
+    </div>
+    <p class="feature-desc">A desk-mounted robot that sees, hears, speaks, and judges — combining <strong style="color:var(--text)">10 machine learning models</strong> across computer vision, audio classification, NLP, and sensor fusion. It recognizes faces, tracks people with pan-tilt servos, detects environmental sounds like glass breaking or sirens, holds Gemini-powered conversations in a human-sounding voice, answers questions about uploaded documents, and reviews code on save — all running on hardware salvaged from a dead ThinkPad and a broken phone.</p>
+    <div class="feature-quote">"Its metal chassis became J.I.N.X's body. A spare phone that couldn't make calls became its eyes, ears, and voice. Total hardware cost: ₹4,550."</div>
+
+    <div class="stack-tags">
+      <span>Python</span><span>YOLOv5-nano</span><span>MediaPipe</span><span>TensorFlow / Keras</span>
+      <span>dlib · face_recognition</span><span>Vosk STT</span><span>edge-TTS</span><span>Gemini 2.0 Flash</span>
+      <span>ESP32 / C++</span><span>MQTT</span><span>Flask</span><span>Streamlit</span><span>scikit-learn</span>
+    </div>
+
+    <div class="accordion" id="jinxAccordion">
+      <div class="acc-item">
+        <button class="acc-head"><span><span class="num">01</span>AI &amp; intelligence</span><span class="chev">+</span></button>
+        <div class="acc-panel"><div class="acc-panel-inner"><ul>
+          <li>Real-time face detection &amp; recognition with colour-coded threat status (safe / unknown / flagged)</li>
+          <li>33-point skeleton pose estimation and 21-point hand gesture control</li>
+          <li>Custom CNN trained on UrbanSound8K to detect gunshots, sirens, glass breaking, screams</li>
+          <li>Offline wake-word detection ("Hey JINX") with full voice command control</li>
+          <li>Gemini-powered conversation with a persistent sarcastic personality</li>
+          <li>Document Q&amp;A and live code review agent over a watched project folder</li>
+        </ul></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-head"><span><span class="num">02</span>Physical &amp; mechanical</span><span class="chev">+</span></button>
+        <div class="acc-panel"><div class="acc-panel-inner"><ul>
+          <li>TFT display with 12 animated eye states, synced pupil-tracking to detected faces</li>
+          <li>Pan-tilt head servos that physically follow people</li>
+          <li>VL53L0X time-of-flight sensors for millimetre-accurate table-edge detection</li>
+          <li>Dual ultrasonic + ToF obstacle avoidance and automatic battery management</li>
+          <li>WS2812B reactive LED strip with 11 mood-based animation modes</li>
+        </ul></div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-head"><span><span class="num">03</span>Control &amp; interface</span><span class="chev">+</span></button>
+        <div class="acc-panel"><div class="acc-panel-inner"><ul>
+          <li>Flask web control panel — any phone on the network can drive the robot, no app needed</li>
+          <li>Streamlit "cyberpunk" dashboard with live camera feed, skeleton view, and network map</li>
+          <li>Five operating modes: Buddy, Sentinel (surveillance), Roast, Agent, and Sleep</li>
+        </ul></div></div>
+      </div>
+    </div>
+
+    <div class="feature-links">
+      <a href="https://github.com/vinayak605/J.I.N.X" target="_blank" rel="noopener" class="btn btn-primary">View repository</a>
+    </div>
+  </div>
+
+  <!-- Other projects -->
+  <div class="proj-grid">
+    <div class="proj-card">
+      <div class="proj-index">02</div>
+      <h3>Phishing / Fake Website Detection System</h3>
+      <p>A web interface backed by machine learning models that analyses and predicts fraudulent or fake websites in real time, built to strengthen everyday web security.</p>
+      <div class="proj-tags"><span>Python</span><span>Machine Learning</span><span>Web Security</span></div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-index">03</div>
+      <h3>Hand Gesture 3D Particle Shape Identifier</h3>
+      <p>An interactive 3D particle visualization web app that recognizes hand gestures in real time and dynamically reshapes the particle field in response.</p>
+      <div class="proj-tags"><span>JavaScript</span><span>3D Graphics</span><span>Gesture Recognition</span></div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-index">04</div>
+      <h3>Sales &amp; Business Insights Dashboards</h3>
+      <p>Interactive Power BI dashboards analysing sales trends and tracking KPIs, built to support faster, data-driven strategic decisions.</p>
+      <div class="proj-tags"><span>Power BI</span><span>Data Visualization</span><span>Business Analysis</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec-head">
+    <div class="eyebrow">Skills</div>
+    <h2>What I build with</h2>
+  </div>
+  <div class="skills-wrap">
+    <div class="skill-col">
+      <h4>LANGUAGES &amp; CODE</h4>
+      <ul><li>Python</li><li>C++</li><li>JavaScript</li><li>HTML / CSS</li></ul>
+    </div>
+    <div class="skill-col">
+      <h4>DATA &amp; ANALYSIS</h4>
+      <ul><li>Data Analysis &amp; Visualization</li><li>Power BI (Basic)</li><li>Research Skills</li></ul>
+    </div>
+    <div class="skill-col">
+      <h4>APPLIED / BUILD</h4>
+      <ul><li>Web Development</li><li>Applied ML systems</li><li>Business Understanding</li></ul>
+    </div>
+    <div class="skill-col">
+      <h4>WORKING STYLE</h4>
+      <ul><li>Problem Solving</li><li>Analytical Thinking</li><li>Team Collaboration</li><li>Adaptability</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="sec-head">
+    <div class="eyebrow">Education</div>
+    <h2>Background</h2>
+  </div>
+  <div class="edu-row">
+    <div>
+      <h3>Maharishi University of Information Technology</h3>
+      <p>Bachelor's Degree, Data Science · Ghaziabad, Uttar Pradesh, India</p>
+    </div>
+    <div class="edu-status">In progress</div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-wrap">
+    <div class="eyebrow" style="justify-content:center;">Get in touch</div>
+    <h2>Let's build something that works.</h2>
+    <p>Open to internships, collaborations, and data / ML roles. Reach out directly or connect on LinkedIn and GitHub.</p>
+    <div class="contact-links">
+      <button class="btn btn-primary" id="copyEmailBtn">vinayakkapoor6605@gmail.com</button>
+      <a href="https://www.linkedin.com/in/vinayak-kapoor-0a47b2380" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
+      <a href="https://github.com/vinayak605" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
+    </div>
+    <div class="copy-note" id="copyNote">✓ Email copied to clipboard</div>
+  </div>
+</section>
+
+<footer>© 2026 VINAYAK KAPOOR — BUILT WITH PYTHON, RECYCLED HARDWARE, AND MILD SARCASM</footer>
+
+<script>
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navList = document.getElementById('navList');
+  navToggle.addEventListener('click', () => navList.classList.toggle('open'));
+  navList.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navList.classList.remove('open')));
+
+  // Scrollspy
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  const spy = () => {
+    let current = '';
+    sections.forEach(sec => {
+      const top = sec.offsetTop - 120;
+      if (window.scrollY >= top) current = sec.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  };
+  window.addEventListener('scroll', spy);
+  spy();
+
+  // Terminal boot sequence -> reveal hero
+  const lines = [
+    "$ jinx.boot('vinayak_kapoor')",
+    "[INIT] Loading PROFILE............... <span class='ok'>OK</span>",
+    "[INIT] Loading SKILLS................ <span class='ok'>OK</span>",
+    "[INIT] Loading PROJECTS.............. <span class='ok'>OK</span>",
+    "> STATUS: portfolio online"
+  ];
+  const termEl = document.getElementById('termLines');
+  const heroEl = document.getElementById('hero');
+  let li = 0;
+  function typeNext(){
+    if(li >= lines.length){
+      heroEl.classList.add('revealed');
+      return;
+    }
+    const div = document.createElement('div');
+    div.className = 'terminal-line';
+    div.innerHTML = lines[li] + (li === lines.length-1 ? '<span class="cursor"></span>' : '');
+    termEl.appendChild(div);
+    li++;
+    setTimeout(typeNext, li === lines.length ? 260 : 340);
+  }
+  setTimeout(typeNext, 260);
+
+  // Accordion
+  document.querySelectorAll('#jinxAccordion .acc-head').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      const panel = item.querySelector('.acc-panel');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('#jinxAccordion .acc-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.acc-panel').style.maxHeight = null;
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // Copy email
+  const copyBtn = document.getElementById('copyEmailBtn');
+  const copyNote = document.getElementById('copyNote');
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText('vinayakkapoor6605@gmail.com').then(() => {
+      copyNote.classList.add('show');
+      setTimeout(() => copyNote.classList.remove('show'), 1800);
+    }).catch(() => {
+      window.location.href = 'mailto:vinayakkapoor6605@gmail.com';
+    });
+  });
+</script>
+
+</body>
+</html>
